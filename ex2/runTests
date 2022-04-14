@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#input variables (input directory, output directory, number of maxthreads)
+inputdir=$1
+outputdir=$2
+maxthreads=$3
+
+#Checks if both input and output directories exist
+if [ -d "$inputdir" ] && [ -d "$outputdir" ] && [ "$maxthreads" -ge 1 ]; then
+    #The for loop checks each file in the input directory
+    for file in "$inputdir/"*.txt;
+    do
+        #Filters the name of the input file by removing the .txt extension
+        filename=$(basename -- "$file" .txt)    
+
+        #Creates a loop that for 1 until maxthreads and executes the tecnicofs with the i number of threads
+        for i in $(seq 1 "${maxthreads}");
+        do
+            #prints the name of the input file and the current number of threads used in tecnicofs
+            echo "InputFile=${filename} NumThreads=${i}"
+
+            #creates the name of the output file by concatenating the name of the input file and the current number of threads 
+            outname="${filename}-${i}".txt
+
+            #creates the output file by executing tecnicofs,printing its last line and saving the output file in the output directory 
+            ./tecnicofs "${file}" "${outputdir}/${outname}" "${i}" |sed '/^$/d'| awk NR | sort -nr| awk 'NR==1'
+        done
+    done
+elif [ "$maxthreads" -lt 1 ]; then
+    echo "Error: number of threads < 1"
+    exit 1
+else
+    echo "Error: Directory not found."
+    exit 1
+fi
