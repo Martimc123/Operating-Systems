@@ -1,4 +1,4 @@
-# SO
+# Operating Systems
 Describes Implementation of the TecnicoFS file system
 
 Note: in the second exercise run the tests using the shell script runTests
